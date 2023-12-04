@@ -1,0 +1,168 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relogio Online</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="container">
+
+        
+
+  <div class="toggle">
+    <input id="switch" type="checkbox" name="theme" >
+    <label for="switch" >Toggle</label>
+  </div>
+
+<h1>Relogio Digital</h1>
+
+<div class='clock'>
+<div id='hora'>00</div>
+<div id='minutos'>00</div>
+<div id='segundos'>00</div>
+</div>
+
+<!-- adiciona uma linha -->
+<hr class="container"/> 
+
+      
+   <div id='container-timer'>
+    <h3 class="title-cronometro">Cronômetro</h3>
+        <div id="timer">00:00:00</div>
+        <button id="startStop" class="button" onclick="startStop()">Iniciar</button>
+        <button id="reset" class="button"  onclick="reset()">Reiniciar</button>
+    </div>
+
+    <div class="countdown-container" id='container-timer'>
+        <h3 class="title-temporizador" >Temporizador Regressivo (minutos)</h3>
+        <input type="number" id="countdownInput" placeholder="Digite os minutos">
+        <br/>
+        <button onclick="startCountdown()">Iniciar Temporizador</button>
+        <button onclick="linkTask()">Vincular a Tarefa</button>
+
+        <div id="countdown" class="countdown"></div>
+        <div id="taskInfo" class="task-info"></div>
+
+    </div>
+
+  </div>
+  
+  
+  <hr class="container"/>
+
+  <div class="container" >
+            <div id="exibirNomeDoDia" ></div>
+      <div id="header">
+        <div id="monthDisplay"></div>
+
+        <div>
+          <button id="backButton">Voltar</button>
+          <button id="nextButton">Próximo</button>
+        </div>
+          
+      </div>
+
+    
+
+
+      <!-- div dinamic -->
+      <div id="calendar" ></div>
+
+   
+  </div>
+
+  <div id="newEventModal">
+    <h2>New Evente</h2>
+
+    <input id="eventTitleInput" placeholder="Event Title"/>
+
+    <button id="saveButton"> Salvar</button>
+    <button id="cancelButton">Cancelar</button>
+  </div>
+
+  <div id="deleteEventModal">
+    <h2>Evento</h2>
+
+    <div id="eventText"></div><br>
+
+
+    <button id="deleteButton">Deletar</button>
+    <button id="closeButton">Fechar</button>
+  </div>
+
+  <div id="modalBackDrop"></div>
+
+  <hr class="container"/>
+
+  <div class="task-manager container">
+    <h1>Gestão de Tarefas</h1>
+    <input type="text" id="taskInput" placeholder="Adicionar nova tarefa">
+    <button class="btn-add-task" onclick="addTask()">Adicionar Tarefa</button>
+    <ul  id="taskList"></ul>
+    <button class="btn-delete-all-task" onclick="clearTasks()">Limpar Tarefas</button>
+</div>
+
+  <footer >
+    <a href="https://ruanfr.com" target="_blank"> <p>Feito com ❤️ por Ruan Freire</p></a>
+  </footer>
+
+  
+
+
+  <!-- Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p>Temporizador Regressivo Concluído!</p>
+    </div>
+</div>
+</div>
+
+
+
+
+    <script src="script.js"></script>
+  <script>
+        function exibirNomeDoDia() {
+            // Criar um objeto Date para a data atual
+            const dataAtual = new Date();
+
+            // Array de nomes dos dias da semana
+            const nomesDosDias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+
+            // Obter o índice do dia da semana (0 a 6)
+            const indiceDoDia = dataAtual.getDay();
+
+            // Obter o nome do dia usando o índice
+            const nomeDoDia = nomesDosDias[indiceDoDia];
+
+            // Formatar a data
+            const dataFormatada = formatarData(dataAtual);
+
+            // Exibir na div
+            const divExibirNomeDoDia = document.getElementById('exibirNomeDoDia');
+            divExibirNomeDoDia.textContent = `Hoje é ${dataFormatada} e é um(a) ${nomeDoDia}.`;
+        }
+
+        function formatarData(data) {
+            const dia = data.getDate();
+            const mes = data.getMonth() + 1; // Mês é baseado em zero, então adicionamos 1
+            const ano = data.getFullYear();
+
+            return `${dia} de ${nomeDoMes(mes)} de ${ano}`;
+        }
+
+        function nomeDoMes(numeroDoMes) {
+            const nomesDosMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            return nomesDosMeses[numeroDoMes - 1];
+        }
+
+        // Chamar a função para exibir a data e o nome do dia
+        exibirNomeDoDia();
+    </script>
+</body>
+</html>
