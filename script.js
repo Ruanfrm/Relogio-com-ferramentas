@@ -409,12 +409,12 @@ function startCountdown() {
 
             if (remainingTime <= 0) {
                 clearInterval(countdownInterval);
-                openModal();
+                openModalTemporizador();
             } else {
                 const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
-                document.getElementById('countdown').textContent = `Temporizador Regressivo: ${formatTwoDigits(minutes)}:${formatTwoDigits(seconds)}`;
+                document.getElementById('countdown').textContent = `${formatTwoDigits(minutes)}:${formatTwoDigits(seconds)}`;
             }
         }, 1000);
     } else {
@@ -457,6 +457,7 @@ function linkTask() {
 // lista de tarefas
 
 let tasks = [];
+let taskToDeleteIndex = null; // Adicione esta linha
 
 // Carregar tarefas salvas no localStorage
 document.addEventListener('DOMContentLoaded', function () {
@@ -464,6 +465,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (savedTasks) {
         tasks = JSON.parse(savedTasks);
         updateTaskList();
+        updateDeleteButton();
     }
 });
 
@@ -474,6 +476,7 @@ function addTask() {
     if (taskName !== '') {
         tasks.push({ name: taskName, completed: false });
         updateTaskList();
+        updateDeleteButton();
         saveTasksToLocalStorage();
         taskInput.value = '';
     }
@@ -491,25 +494,12 @@ function updateTaskList() {
         tasks.forEach((task, index) => {
             const li = document.createElement('li');
             li.innerHTML = `
-        <div class="tooltip-container">
+                <input type="checkbox" id="task${index}" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})">
+                <label for="task${index}" ${task.completed ? 'class="completed"' : ''}>${task.name}</label>
+                <h4 for="task${index}" ${task.completed ? 'class="completed"' : ''}>${task.name}</h4>
 
-            <input type="checkbox" id="task${index}" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})">
-            <label for="task${index}" ${task.completed ? 'class="completed"' : ''}>${task.name}</label>
-            
-            <div class="tooltip-baixo">Marcar como feita</div>
-            </div>
-
-            
-            
-            <h4  id="task${index}" ${task.completed ? 'class="completed"' : ''}>${task.name}</h4>
-
-        <div class="tooltip-container">
-            <div class="tooltip">Tem certeza que deseja excluir essa tarefa?</div>
-            <button onclick="deleteTask(${index})">Excluir</button>
-        </div>
-
-
-        `;
+                <button onclick="confirmDeleteTask(${index})">Excluir</button>
+            `;
             taskList.appendChild(li);
         });
     }
@@ -518,21 +508,65 @@ function updateTaskList() {
 function toggleTask(index) {
     tasks[index].completed = !tasks[index].completed;
     updateTaskList();
+    updateDeleteButton();
     saveTasksToLocalStorage();
 }
 
 function deleteTask(index) {
-    tasks.splice(index, 1);
-    updateTaskList();
-    saveTasksToLocalStorage();
+    openDeleteTaskModal(index);
 }
 
-function clearTasks() {
+function confirmDeleteTask(index) {
+    openDeleteTaskModal(index);
+    if (taskToDeleteIndex !== null) {
+        tasks.splice(taskToDeleteIndex, 1);
+        updateTaskList();
+        updateDeleteButton();
+        saveTasksToLocalStorage();
+    }
+    taskToDeleteIndex = null; // Adicione esta linha
+
+    
+    closeDeleteTaskModal()
+}
+
+function openDeleteTaskModal(index) {
+    taskToDeleteIndex = index;
+    const modal = document.getElementById('deleteTaskModal');
+    modal.style.display = 'block';
+}
+
+function closeDeleteTaskModal() {
+    const modal = document.getElementById('deleteTaskModal');
+    modal.style.display = 'none';
+}
+
+function deleteAllTasks() {
     tasks = [];
     updateTaskList();
+    updateDeleteButton();
     saveTasksToLocalStorage();
+    closeDeleteAllModal();
+}
+
+function confirmDeleteAll() {
+    const modal = document.getElementById('deleteAllModal');
+    modal.style.display = 'block';
+}
+
+function closeDeleteAllModal() {
+    const modal = document.getElementById('deleteAllModal');
+    modal.style.display = 'none';
+}
+
+
+
+function updateDeleteButton() {
+    const deleteAllBtn = document.getElementById('deleteAllBtn');
+    deleteAllBtn.style.display = tasks.length > 0 ? 'block' : 'none';
 }
 
 function saveTasksToLocalStorage() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
+
